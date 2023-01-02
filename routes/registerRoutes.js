@@ -32,16 +32,38 @@ router.post("/", async (req, res, next) => {
                 {email: email}
             ]
          })
-         console.log(user);
+         .catch((error) =>{
+            console.log(error); 
 
-         console.log("Hello"); 
+            payload.errorMessage = "Something went wrong"
+            res.status(200).render("register", payload);
+         });
+
+         if(user==null){
+            //No user found
+            var data = req.body; 
+            //hash the password 
+
+            User.create(data)
+            .then(() =>{
+                console.log(user); 
+            })
+         }
+         else{
+            //user found 
+            if(email == user.email){
+                payload.errorMessage = "Email already in use."
+            }
+            else {
+                payload.errorMessage = "Username already in use."
+            }
+         }
     }
     else{
         payload.errorMessage = "Make sure each field has a valid value."
         res.status(200).render("register", payload);
     }
-    console.log(req.body); 
-    res.status(200).render("register");
+    
  });
  
 
