@@ -10,8 +10,10 @@
   "author": "Kari Laxman",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
     "express": "^4.18.2",
+    "express-session": "^1.17.3",
     "mongodb": "^4.13.0",
     "mongoose": "^6.8.2",
     "pug": "^3.0.2"

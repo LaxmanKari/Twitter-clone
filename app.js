@@ -5,8 +5,8 @@ const port = 3003;
 const middleware = require('./middleware'); 
 const path = require('path'); 
 const bodyParser = require('body-parser');  
-
 const mongoose = require('./database'); 
+const session = require('express-session'); 
 
 //instance of our app, takes two parameters port and a callback function
 const server = app.listen(port, () => {
@@ -22,6 +22,12 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 //static files 
 app.use(express.static(path.join(__dirname, "public"))); 
+
+app.use(session({
+  secret: "bbq chips",
+  resave: true,
+  saveUninitialized: false
+}))
 
 // Routes
 const loginRoute = require('./routes/loginRoutes'); 
