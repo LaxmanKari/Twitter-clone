@@ -60,6 +60,8 @@ router.post("/", async (req, res, next) => {
             else {
                 payload.errorMessage = "Username already in use."
             }
+            
+            return res.status(200).render("register", payload);
          }
     }
     else{

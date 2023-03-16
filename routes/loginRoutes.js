@@ -43,7 +43,8 @@ router.post("/", async(req, res, next) => {
       }
 
       payload.errorMessage = "Login Credentials Incorrect."
-      return res.status(200).render("login", payload);
+      return res.status(400).render("login", payload);
+     
    }
 
    payload.errorMessage = "Make sure each field has a valid value"
