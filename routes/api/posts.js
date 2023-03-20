@@ -11,8 +11,16 @@ app.use(bodyParser.urlencoded({extended: false}));
 //handlers
 
 router.get("/", (req, res, next) => {
-   
-   
+   Post.find() 
+   .populate("postedBy")
+   .sort({"createdAt": -1})
+   // if we have only one argument and only one line of excecution we can remove () & {} 
+   .then( results => res.status(200).send(results)) 
+   .catch(error => {
+     console.log(error); 
+     res.sendStatus(400); 
+   })
+   return; 
 });
 
 router.post("/", async(req, res, next) => {
