@@ -46,7 +46,10 @@ app.use("/api/posts", postsApiRoute);
 app.get("/", middleware.requireLogin, (req, res, next) => {
   var payload = {
     pageTitle: "Home",
-    userLoggedIn: req.session.user
+    userLoggedIn: req.session.user,
+    userLoggedInJs: JSON.stringify(req.session.user)
+    //the above line is included to make this req.session.user value to the pug template
+    // as the first two are not available in a page, these are only available when the page first render's
   };
 
   res.status(200).render("home", payload);
