@@ -13,9 +13,14 @@ app.use(bodyParser.urlencoded({extended: false}));
 router.get("/", (req, res, next) => {
    Post.find() 
    .populate("postedBy")
+   .populate("retweetData")
    .sort({"createdAt": -1})
    // if we have only one argument and only one line of excecution we can remove () & {} 
-   .then( results => res.status(200).send(results)) 
+   .then( async results => {
+    //
+    results = await User.populate(results, { path: "retweetData.postedBy"});
+    res.status(200).send(results)
+   }) 
    .catch(error => {
      console.log(error); 
      res.sendStatus(400); 
@@ -78,6 +83,57 @@ router.put("/:id/like", async(req, res, next) => {
 
   //insert post like
   var post = await Post.findByIdAndUpdate(postId, {[option]: {likes: userId}}, {new :true})
+  .catch(error =>{
+    console.log(error); 
+    res.sendStatus(400); 
+  })
+  
+
+  res.status(200).send(post); 
+  
+});
+
+
+router.post("/:id/retweet", async(req, res, next) => {
+
+  
+    
+  var postId = req.params.id; 
+  var userId = req.session.user._id; 
+  
+  
+  //Try and delete retweet 
+  var deletedPost = await Post.findOneAndDelete({ postedBy: userId, retweetData: postId})
+  .catch(error =>{
+    console.log(error); 
+    res.sendStatus(400); 
+  })
+
+
+  var option = deletedPost !=null ? "$pull" : "$addToSet"; 
+
+  var repost = deletedPost; 
+
+  if(repost == null){
+    repost = await Post.create({ postedBy: userId, retweetData: postId})
+    .catch(error =>{
+      console.log(error); 
+      res.sendStatus(400); 
+    })
+  }
+
+  
+  //insert user like
+  req.session.user = await User.findByIdAndUpdate(userId, {[option]: {retweets: repost._id}}, {new :true}) 
+  // {new: true} gives new updated object (record)
+  //[option] we need to include brackets[], if we want to have variables in a mongoose query
+  .catch(error =>{
+    console.log(error); 
+    res.sendStatus(400); 
+  })
+
+  //insert post like
+  var post = await Post.findByIdAndUpdate(postId, {[option]: {retweetUsers: userId}}, {new :true})
   .catch(error =>{
     console.log(error); 
     res.sendStatus(400); 
