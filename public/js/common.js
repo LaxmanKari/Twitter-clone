@@ -1,8 +1,10 @@
-$("#postTextarea").keyup(event =>{
+$("#postTextarea, #replyTextarea").keyup(event =>{
     var textbox = $(event.target); 
     var value = textbox.val().trim(); 
 
-    var submitButton = $("#submitPostButton"); 
+    var isModal = textbox.parents(".modal").length == 1;  
+
+    var submitButton = isModal ? $("#submitReplyButton") : $("#submitPostButton"); 
 
     if(submitButton.length == 0){ //if there is button in a page, length would be more than 0
        return alert("No Submit button found");
@@ -18,13 +20,22 @@ $("#postTextarea").keyup(event =>{
     //console.log(value); 
 })
 
-$("#submitPostButton").click((event) =>{
+$("#submitPostButton, #submitReplyButton").click((event) =>{
   var button = $(event.target);
-  var textbox = $("#postTextarea"); // jQuery object with id postTextarea 
+
+  var isModal = button.parents(".modal").length == 1;
+  var textbox = isModal ? $('#replyTextarea') : $("#postTextarea"); 
 
   var data = {
      content: textbox.val() 
   } 
+
+  if(isModal){
+   var id = button.data().id;
+   if(id == null){return alert("Button id is null");} 
+   data.replyTo = id; 
+
+  }
    
   //ajax request, send data to this "/api/posts" endpoint
   $.post("/api/posts", data, (postData, status, xhr) =>{
@@ -32,13 +43,34 @@ $("#submitPostButton").click((event) =>{
      //xhr (xml-http-request) contains status of the request, if succeded = 200 or else 400 (failed) 
      //console.log(postData);
 
-     var html = createPostHtml(postData); 
-     $(".postsContainer").prepend(html); 
-     textbox.val(""); 
-     button.prop("disabled", true); 
+     if(postData.replyTo){
+      location.reload();
+     }
+     else{
+      var html = createPostHtml(postData); 
+      $(".postsContainer").prepend(html); 
+      textbox.val(""); 
+      button.prop("disabled", true); 
+     }
 
   })
 })
+
+//fires when a modal is trigerd 
+$("#replyModal").on("shown.bs.modal", (event) => {
+   var button = $(event.relatedTarget);
+   var postId = getPostIdfromElement(button);
+   $('#submitReplyButton').data("id", postId); // this data attribute is stored for this element in jquery cache,  
+   //will not be shown in element tree
+
+   $.get("/api/posts/" + postId, results =>{
+      outputPosts(results, $("#originalPostContainer"));
+     //console.log("printing when modal is trigered",results); 
+   })
+})
+
+//trigers when modal is closed, we done this because it display sthe prev opened post for few secs, due to latency 
+$("#replyModal").on("hidden.bs.modal", () => $("#originalPostContainer").html(""))
 
 // dynamic content (not available when page loads, this button is only available after making call to the api)
 $(document).on("click", ".likeButton", (event) =>{
@@ -113,7 +145,7 @@ function createPostHtml(postData) {
    var retweetedBy = isRetweet ? postData.postedBy.userName : null; 
    postData = isRetweet ? postData.retweetData : postData; 
 
-   console.log(isRetweet); 
+   //console.log(isRetweet); 
 
    var postedBy = postData.postedBy; 
 
@@ -133,6 +165,22 @@ function createPostHtml(postData) {
                          Retweeted by <a href='/profile/${retweetedBy}'>@${retweetedBy}</a>
                     </span>`
    }
+
+   var replyFlag = ""; 
+   if(postData.replyTo){
+
+      if(!postData.replyTo._id){
+         return alert("Reply to is not populated"); 
+      }
+      else if(!postData.replyTo.postedBy._id){
+         return alert("Posted by is not populated"); 
+      }
+
+      var replyToUsername = postData.replyTo.postedBy.userName; 
+      replyFlag = `<div class='replyFlag'>
+                       Replying to <a href='/profile/${replyToUsername}'>@${replyToUsername} </a>
+                  </div>`;
+   }
    
    return `<div class='post' data-id="${postData._id}"> 
                <div class='postActionContainer'> 
@@ -149,15 +197,16 @@ function createPostHtml(postData) {
                         <span class='username'> @${postedBy.userName} </span> 
                         <span class='date'> ${timestamp} </span>
                       </div> 
+                      ${replyFlag}
                       <div class="postBody"> 
                          <span>${postData.content} </span>
                       </div>
                       <div class="postFooter"> 
-                         <div class="postButtonContainer">
-                            <button> 
-                            <i class="fa-solid fa-comment"></i> 
-                            </button>
-                         </div>
+                      <div class='postButtonContainer'>
+                          <button data-toggle='modal' data-target='#replyModal'>
+                              <i class='far fa-comment'></i>
+                          </button>
+                      </div>
                          <div class="postButtonContainer green">
                             <button class="retweetButton ${retweetButtonActiveClass}"> 
                             <i class="fa-solid fa-retweet"></i>
@@ -215,6 +264,26 @@ function timeDifference(current, previous) {
 
    else {
        return Math.round(elapsed/msPerYear ) + ' years ago';   
+   }
+}
+
+
+// moved from home.js to common as we use this both in home and reply modal 
+function outputPosts(results, container) {
+   container.html(""); 
+   
+   //because when displaying post in reply modal, the results is not an array, therefore converting
+   if(!Array.isArray(results)){
+      results = [results]; 
+   }
+
+   results.forEach(result => {
+     var html = createPostHtml(result)
+     container.append(html); 
+   }); 
+
+   if(results.length == 0) {
+     container.append("<span class='noResults'> Nothing to show. </span>")
    }
 }
 

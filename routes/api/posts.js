@@ -10,22 +10,22 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 //handlers
 
-router.get("/", (req, res, next) => {
-   Post.find() 
-   .populate("postedBy")
-   .populate("retweetData")
-   .sort({"createdAt": -1})
-   // if we have only one argument and only one line of excecution we can remove () & {} 
-   .then( async results => {
-    //
-    results = await User.populate(results, { path: "retweetData.postedBy"});
-    res.status(200).send(results)
-   }) 
-   .catch(error => {
-     console.log(error); 
-     res.sendStatus(400); 
-   })
-   return; 
+router.get("/", async(req, res, next) => {
+  var results = await getPosts({}); 
+  res.status(200).send(results);
+});
+
+//:id is the placeholder 
+router.get("/:id", async(req, res, next) => {
+
+  var postId = req.params.id; 
+
+  var results = await getPosts({_id: postId}); 
+  results = results[0];
+  
+  res.status(200).send(results);
+  
+  
 });
 
 router.post("/", async(req, res, next) => {
@@ -40,6 +40,11 @@ router.post("/", async(req, res, next) => {
       content: req.body.content,
       postedBy: req.session.user
     }
+    
+    if(req.body.replyTo){
+      postData.replyTo = req.body.replyTo;
+    }
+
     Post.create(postData)
     .then(async (newPost) =>{
        newPost = await User.populate(newPost, {path: "postedBy"})
@@ -51,9 +56,6 @@ router.post("/", async(req, res, next) => {
        res.sendStatus(400); 
     })
 
-     
-
-    
 });
 
 router.post("/", async(req, res, next) => {
@@ -143,5 +145,19 @@ router.post("/:id/retweet", async(req, res, next) => {
   res.status(200).send(post); 
   
 });
+
+async function getPosts(filter) {
+
+  var results = await Post.find(filter)
+  .populate("postedBy")
+  .populate("retweetData")
+  .populate("replyTo")
+  .sort({"createdAt": -1})
+  .catch(error => console.log(error))
+
+  results = await User.populate(results, { path: "replyTo.postedBy"});
+  return await User.populate(results, { path: "retweetData.postedBy"});
+ 
+}
 
 module.exports = router; 
