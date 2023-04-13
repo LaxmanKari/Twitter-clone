@@ -69,7 +69,7 @@ $("#replyModal").on("shown.bs.modal", (event) => {
    })
 })
 
-//trigers when modal is closed, we done this because it display sthe prev opened post for few secs, due to latency 
+//trigers when modal is closed, we done this because it displays the prev opened post for few secs, due to latency 
 $("#replyModal").on("hidden.bs.modal", () => $("#originalPostContainer").html(""))
 
 
@@ -80,9 +80,11 @@ $("#deletePostModal").on("shown.bs.modal", (event) => {
    var postId = getPostIdfromElement(button);
    $('#deletePostButton').data("id", postId); // this data attribute is stored for this element in jquery cache,  
    //will not be shown in element tree
+
+   console.log($('#deletePostButton').data().id);
 })
 
-   console.log($('#deletePostButton').data().id); 
+    
 
 $('#deletePostButton').click((event) => {
      var postId =$(event.target).data("id"); //element's data id 
@@ -92,9 +94,9 @@ $('#deletePostButton').click((event) => {
       type: "DELETE",
       // callback returns some data, we can then use status code 
       success: (postData) => {
-          if(xhr != 202){
-            alert("could not delete the post"); 
-          }
+         //  if(xhr != 202){
+         //    alert("could not delete the post"); 
+         //  }
           location.reload(); //reload the page
       }
    })

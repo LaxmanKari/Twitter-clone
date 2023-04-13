@@ -11,7 +11,17 @@ app.use(bodyParser.urlencoded({extended: false}));
 //handlers
 
 router.get("/", async(req, res, next) => {
-  var results = await getPosts({}); 
+
+  var searchObj = req.query; 
+
+  if(searchObj.isReply !== undefined){
+    var isReply = searchObj.isReply == 'true'; 
+    searchObj.replyTo = { $exists: isReply}; 
+    delete searchObj.isReply; //delete object 
+    console.log(searchObj);
+  }
+  var results = await getPosts(searchObj); 
+  
   res.status(200).send(results);
 });
 
@@ -160,7 +170,7 @@ router.delete("/:id", (req,res,next) => {
   Post.findByIdAndDelete(req.params.id)
   .then(() => { res.sendStatus(202)})
   .catch((error) => {
-    console.log(error); 
+    console.log("while deleting : ",error); 
     res.sendStatus(400); 
   })
 })
