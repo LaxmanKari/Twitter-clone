@@ -72,6 +72,37 @@ $("#replyModal").on("shown.bs.modal", (event) => {
 //trigers when modal is closed, we done this because it display sthe prev opened post for few secs, due to latency 
 $("#replyModal").on("hidden.bs.modal", () => $("#originalPostContainer").html(""))
 
+
+$("#deletePostModal").on("shown.bs.modal", (event) => {
+
+   
+   var button = $(event.relatedTarget);
+   var postId = getPostIdfromElement(button);
+   $('#deletePostButton').data("id", postId); // this data attribute is stored for this element in jquery cache,  
+   //will not be shown in element tree
+})
+
+   console.log($('#deletePostButton').data().id); 
+
+$('#deletePostButton').click((event) => {
+     var postId =$(event.target).data("id"); //element's data id 
+
+     $.ajax({
+      url: `/api/posts/${postId}`,
+      type: "DELETE",
+      // callback returns some data, we can then use status code 
+      success: (postData) => {
+          if(xhr != 202){
+            alert("could not delete the post"); 
+          }
+          location.reload(); //reload the page
+      }
+   })
+
+})
+
+
+
 // dynamic content (not available when page loads, this button is only available after making call to the api)
 $(document).on("click", ".likeButton", (event) =>{
    var button = $(event.target);
@@ -191,6 +222,12 @@ function createPostHtml(postData, largeFont = false) {
                        Replying to <a href='/profile/${replyToUsername}'>@${replyToUsername} </a>
                   </div>`;
    }
+
+   var buttons = ""; 
+   if(postData.postedBy._id == userLoggedIn._id){
+      buttons = `<button data-id="${postData._id}" data-toggle="modal" data-target="#deletePostModal"> <i class="fa-sharp fa-solid fa-xmark"></i>
+                 </button> `
+   }
    
    return `<div class='post ${largeFontClass}' data-id="${postData._id}"> 
                <div class='postActionContainer'> 
@@ -206,6 +243,7 @@ function createPostHtml(postData, largeFont = false) {
                         <a href='/profile/${postedBy.userName}' class="displayName"> ${displayName} </a> 
                         <span class='username'> @${postedBy.userName} </span> 
                         <span class='date'> ${timestamp} </span>
+                        ${buttons}
                       </div> 
                       ${replyFlag}
                       <div class="postBody"> 
