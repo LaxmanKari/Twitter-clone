@@ -64,6 +64,10 @@ nav a:hover{
    /* for rounded corners above*/
 }
 
+.wrapper > .row {
+   margin: 0; 
+}
+
 button {
    background-color: transparent; 
    border: none; 
@@ -366,3 +370,25 @@ button span {
    color:var(--blue); 
    background-color: var(--blueBackground);
  }
+
+
+ .noResults {
+   padding: var(--spacing); 
+
+ }
+
+.resultsContainer {
+   display: flex; 
+   flex-direction: column;
+}
+
+.resultsContainer .user {
+   padding: var(--spacing);
+   display: flex;
+   border-bottom: 1px solid var(--lightGrey);
+} 
+
+.user .userDetailsContainer {
+   flex: 1; 
+   padding: 0 var(--spacing); 
+}

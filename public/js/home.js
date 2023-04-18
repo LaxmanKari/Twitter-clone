@@ -1,6 +1,6 @@
 $(document).ready(() =>{
     
-   $.get("/api/posts", results =>{
+   $.get("/api/posts", {followingOnly:true}, results =>{
       outputPosts(results, $(".postsContainer")) 
  
    })

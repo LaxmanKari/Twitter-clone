@@ -18,8 +18,30 @@ router.get("/", async(req, res, next) => {
     var isReply = searchObj.isReply == 'true'; 
     searchObj.replyTo = { $exists: isReply}; 
     delete searchObj.isReply; //delete object 
-    console.log(searchObj);
   }
+
+  if(searchObj.followingOnly !== undefined){
+    var followingOnly = searchObj.followingOnly == 'true';
+
+    if(followingOnly){
+      var objectIds = [] ; 
+      
+      if(!req.session.following){
+        req.session.following = [];
+      }
+      req.session.user.following.forEach(user =>{
+          objectIds.push(user);
+      })
+
+      objectIds.push(req.session.user._id); //add our own posts on the feed also 
+  
+      searchObj.postedBy = { $in: objectIds}; //find all the posts where postedBy is anyways in this objectIds array 
+    }
+    
+    delete searchObj.followingOnly; //delete object
+
+  }
+
   var results = await getPosts(searchObj); 
   
   res.status(200).send(results);

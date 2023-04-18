@@ -1,0 +1,20 @@
+extends layouts/main-layout.pug
+
+block content 
+    if !profileUser
+         span.errorMessage Check the URL you are trying to access
+    else 
+         script. 
+            var profileUserId = '!{profileUser._id}'; 
+            var selectedTab = '!{selectedTab}';
+        
+         .tabsContainer 
+            +createTab("Following", `/profile/${profileUser.userName}/following`, selectedTab !="followers")
+            +createTab("Followers", `/profile/${profileUser.userName}/followers`, selectedTab == "followers") 
+
+         .resultsContainer 
+    
+         
+
+block scripts 
+    script(src="/js/followersAndFollowing.js") 

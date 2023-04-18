@@ -105,6 +105,8 @@ $('#deletePostButton').click((event) => {
 
 
 
+
+
 // dynamic content (not available when page loads, this button is only available after making call to the api)
 $(document).on("click", ".likeButton", (event) =>{
    var button = $(event.target);
@@ -126,6 +128,42 @@ $(document).on("click", ".likeButton", (event) =>{
          } 
          else {
             button.removeClass("active");
+         }
+      }
+   })
+})
+
+$(document).on("click", ".followButton", (event) =>{
+   var button = $(event.target);
+   var userId = button.data().user;  
+   
+   $.ajax({
+      url: `/api/users/${userId}/follow`,
+      type: "PUT",
+      success: (data, status, xhr) => {
+
+         if(xhr.status == 404){
+             alert("user not found"); 
+             return;
+         }
+
+         var difference = 1; 
+
+         if(data.following && data.following.includes(userId)) {
+            button.addClass("following"); 
+            button.text("Following"); 
+         } 
+         else {
+            button.removeClass("following");
+            button.text("Follow"); 
+            difference = -1; 
+         }
+
+         var followersLabel = $("#followersValue"); 
+         if(followersLabel !=0){
+            var followersText = followersLabel.text(); 
+            followersText = parseInt(followersText); 
+            followersLabel.text(followersText + difference); 
          }
       }
    })
@@ -165,6 +203,12 @@ $(document).on("click", ".post", (event) =>{
    }
 })
 
+$(document).on("click", ".followButton", (event) =>{
+   var button = $(event.target);
+   var userId = button.data().user; 
+   console.log(userId); 
+})
+
 function getPostIdfromElement(element) {
 
    var isRoot = element.hasClass("post"); 
@@ -187,8 +231,9 @@ function createPostHtml(postData, largeFont = false) {
    var retweetedBy = isRetweet ? postData.postedBy.userName : null; 
    postData = isRetweet ? postData.retweetData : postData; 
 
-   //console.log(isRetweet); 
-
+   // console.log(isRetweet); 
+   // console.log(postData); 
+   
    var postedBy = postData.postedBy; 
 
    if(postedBy._id === undefined){
