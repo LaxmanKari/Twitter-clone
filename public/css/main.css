@@ -1,76 +1,72 @@
 :root {
-   --blue: #1FA2F1; 
-   --blueLight: #9BD1F9; 
-   --blueBackground: rgba(212,237,255,0.6); 
+   --blue: #1FA2F1;
+   --blueLight: #9BD1F9;
+   --blueBackground: rgba(212, 237, 255, 0.6);
    --buttonHoverBg: #d4edff;
-   --lightGrey: rgb(230, 236, 240); 
-   --spacing: 15px; 
-   --greyText: rgb(101,119,134);
-   --greyButtonText: rgba(0,0,0,0.34); 
+   --lightGrey: rgb(230, 236, 240);
+   --spacing: 15px;
+   --greyText: rgb(101, 119, 134);
+   --greyButtonText: rgba(0,0,0,0.34);
    --red: rgb(226,34,94);
-   --redBackground: rgba(226,34,94,0.1); 
-   --green: rgb(23,191,99); 
-   --greenBackground: rgba(23,191,99,0.1); 
-   
+   --redBackground: rgba(226,34,94,0.1);
+   --green: rgb(23,191,99);
+   --greenBackground: rgba(23,191,99,0.1);
 }
 
-*{
-   outline: none !important; 
+* {
+   outline: none !important;
 }
 
-a{
-   color: inherit; 
+a {
+   color: inherit;
 }
 
 a:hover {
-   color: inherit; 
+   color: inherit;
    text-decoration: none;
 }
 
-h1{
-   font-size: 19px; 
-   font-weight: 800; 
-   margin: 0; 
+h1 {
+   font-size: 19px;
+   font-weight: 800;
+   margin: 0;
 }
 
 nav {
-   display: flex; 
-   flex-direction: column; 
-   align-items:flex-end; 
-   height:100%; 
-} 
+   display: flex;
+   flex-direction: column;
+   align-items: flex-end;
+   height: 100%;
+}
 
 nav a {
-   padding: 10px; 
-   font-size: 30px; 
-   width: 55px; 
-   height: 55px; 
-   /* display: flex;  */
-   align-items: center; 
-   justify-content: center; 
-   color: #212529; 
-   text-decoration: none;
+   padding: 10px;
+   font-size: 30px;
+   width: 55px;
+   height: 55px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   color: #212529;
 }
 
 nav a.blue {
-   color: var(--blue); 
-   align-items: center;
+   color: var(--blue);
 }
 
-nav a:hover{
+nav a:hover {
    background-color: var(--buttonHoverBg);
-   color: var(--blue); 
-   border-radius: 50%; 
-   /* for rounded corners above*/
+   color: var(--blue);
+   border-radius: 50%;
 }
 
 .wrapper > .row {
-   margin: 0; 
+   margin: 0;
 }
 
 button {
-   background-color: transparent; 
-   border: none; 
+   background-color: transparent;
+   border: none;
    color: var(--greyButtonText);
 }
 
@@ -79,109 +75,103 @@ button span {
    pointer-events: none;
 }
 
-.mainSectionContainer{
-   padding: 0;
+.mainSectionContainer {
+   padding:  0;
    border-left: 1px solid var(--lightGrey);
    border-right: 1px solid var(--lightGrey);
-   display: flex; 
+   display: flex;
    flex-direction: column;
 }
 
 .titleContainer {
-   height: 53px; 
+   height: 53px;
    padding: 0 var(--spacing);
    display: flex;
-   align-items: center; 
+   align-items: center;
    border-bottom: 1px solid var(--lightGrey);
-   flex-shrink: 0; 
+   flex-shrink: 0;
 }
 
 .titleContainer h1 {
-   flex: 1; 
-   /* takes complete width */
+   flex: 1;
 }
 
 .postFormContainer {
-   display: flex; 
-   padding: var(--spacing); 
-   border-bottom: 10px solid rgb(230,236,240);
-   flex-shrink:0; 
-} 
+   display: flex;
+   padding: var(--spacing);
+   border-bottom: 10px solid rgb(230, 236, 240);
+   flex-shrink: 0;
+}
 
 .modal .postFormContainer {
-   border: none; 
-   padding:0; 
-   padding-top: var(--spacing); 
+   border: none;
+   padding: 0;
+   padding-top: var(--spacing);
 }
 
 .modal .post {
-   padding-top: 0;
-   padding-bottom: var(--spacing);
+   padding: 0 0 var(--spacing) 0;
 }
 
 .userImageContainer {
-   width: 50px; 
-   height: 50px; 
+   width: 50px;
+   height: 50px;
 }
 
-.userImageContainer img{
-   width: 100%; 
+.userImageContainer img {
+   width: 100%;
    border-radius: 50%;
-   background-color: white; 
+   background-color: white;
 }
 
 .textareaContainer {
-   flex: 1; 
-   padding-left: var(--spacing); 
+   flex: 1;
+   padding-left: var(--spacing);
 }
 
 .textareaContainer textarea {
-   width: 100%; 
-   border: none; 
+   width: 100%;
+   border: none;
    resize: none;
-   font-size: 19px; 
+   font-size: 19px;
 }
 
 #submitPostButton {
-   background-color: var(--blue); 
-   color: white; 
-   border: none; 
-   border-radius: 40px; 
-   padding: 7px 15px; 
+   background-color: var(--blue);
+   color: white;
+   border: none;
+   border-radius: 40px;
+   padding: 7px 15px;
 }
 
 #submitPostButton:disabled {
-   background-color: var(--blueLight); 
-   
+   background-color: var(--blueLight);
 }
 
 .post {
-   display: flex; 
-   flex-direction: column; 
-   padding: var(--spacing); 
-   cursor: pointer; 
-   border-bottom: 1px solid var(--lightGrey); 
-   flex-shrink: 0; 
+   display: flex;
+   flex-direction: column;
+   padding: var(--spacing);
+   cursor: pointer;
+   border-bottom: 1px solid var(--lightGrey);
+   flex-shrink: 0;
 }
 
 .mainContentContainer {
-   flex: 1; 
-   display: flex; 
-
-} 
+   flex: 1;
+   display: flex;
+}
 
 .postContentContainer {
-   padding-left: var(--spacing); 
-   display: flex; 
-   flex-direction: column; 
-   flex: 1; 
-
-} 
+   padding-left: var(--spacing);
+   display: flex;
+   flex-direction: column;
+   flex: 1;
+}
 
 .username,
-.date { 
-   color: var(--greyText);
-   
+.date {
+   color: var(--greyText)
 }
 
 .displayName {
@@ -189,39 +179,33 @@ button span {
 }
 
 .postFooter {
-   display: flex; 
-   align-items: center; 
-
+   display: flex;
+   align-items: center;
 }
 
 .postFooter .postButtonContainer {
-   flex: 1; 
-   /* ^^^ takes the available width ^^^ (flex -1) */
+   flex: 1;
    display: flex;
-} 
-
-.postFooter .postButtonContainer button {
-   padding: 0 5px; 
-
 }
 
-.header a,
-.header span {
-   text-decoration: none;
-   padding-right: 5px;
+.postFooter .postButtonContainer button {
+   padding: 2px 5px;
 }
 
 .header a:hover {
    text-decoration: underline;
-} 
+}
+
+.header a,
+.header span {
+   padding-right: 5px;
+}
 
 .postButtonContainer button:hover {
    background-color: #d4edff;
-   color: var (--blue);
-   border-radius: 50%; 
-
+   color: var(--blue);
+   border-radius: 50%;
 }
-
 
 .postButtonContainer.red button.active {
    color: var(--red);
@@ -229,8 +213,7 @@ button span {
 
 .postButtonContainer.red button:hover {
    color: var(--red);
-   background-color: var(--redBackground);
-
+   background-color: var(--redBackground)
 }
 
 .postButtonContainer.green button.active {
@@ -239,151 +222,145 @@ button span {
 
 .postButtonContainer.green button:hover {
    color: var(--green);
-   background-color: var(--greenBackground);
-
+   background-color: var(--greenBackground)
 }
 
 .postActionContainer {
    padding-left: 35px;
-   font-size: 13px; 
+   font-size: 13px;
    color: var(--greyText);
    margin-bottom: 5px;
 }
 
 .replyFlag {
-   margin-bottom: 5px; 
-
+   margin-bottom: 5px;
 }
 
 .replyFlag a {
-   color: var(--blue); 
+   color: var(--blue);
 }
 
 .post.largeFont .postBody,
 .post.largeFont .postFooter {
-   font-size: 23px; 
+   font-size: 23px;
 }
 
-
-.postContentContainer .header{
+.postContentContainer .header {
    display: flex;
 }
 
 .postContentContainer .header .date {
-    flex: 1; 
+   flex: 1;
 }
 
 .errorMessage {
    padding: var(--spacing);
 }
 
-.profileHeaderContainer .coverPhotoContainer {
-   height: 180px; 
-   background-color: var(--blue); 
-   position: relative; 
+.coverPhotoSection {
+   height: 180px;
+   background-color: var(--blue);
+   position: relative;
 }
 
 .profileHeaderContainer .userImageContainer {
-   height: 132px; 
-   width: 132px; 
-   margin-left: var(--spacing); 
-   position: absolute; 
-   bottom: -66px; 
-   
-   /* for cam profile pic */
-   display: flex; 
+   width: 132px;
+   height: 132px;
+   margin-left: var(--spacing);
+   position: absolute;
+   bottom: -66px;
+
+   display: flex;
    align-items: center;
    justify-content: center;
 }
 
-.profileHeaderContainer .userImageContainer img{
-  border: 4px solid #fff; 
+.profileHeaderContainer .userImageContainer img {
+   border: 4px solid #fff;
 }
 
 .profileHeaderContainer .profileButtonsContainer {
-   text-align: right; 
-   padding: var(--spacing); 
-   min-height: 66px; 
+   text-align: right;
+   padding: var(--spacing);
+   min-height: 66px;
 }
 
 .profileButton,
 .followButton {
-   border: 1px solid var(--blue); 
-   color: var(--blue); 
-   font-weight: bold; 
+   border: 1px solid var(--blue);
+   color: var(--blue);
+   font-weight: bold;
    padding: 5px 15px;
-   border-radius: 60px; 
-   display: inline-block; 
+   border-radius: 60px;
+   display: inline-block;
    margin-left: var(--spacing);
 }
 
 .profileButton:hover,
-.followButton:hover{
+.followButton:hover {
    background-color: var(--blueBackground);
 }
 
-.followButton.following{
-   background-color: var(--blue); 
-   color: #fff; 
+.followButton.following {
+   background-color: var(--blue);
+   color: #fff;
 }
 
 .profileHeaderContainer .userDetailsContainer {
-   display: flex; 
+   display: flex;
    flex-direction: column;
-   padding: 0 var(--spacing); 
+   padding: 0 var(--spacing);
 }
 
 .followersContainer .value {
-  font-weight: bold; 
-  margin-right: 5px; 
+   font-weight: bold;
+   margin-right: 5px;
 }
 
 .followersContainer span:not(.value) {
-   color: var(--greyText);   
- }
+   color: var(--greyText);
+}
 
- .followersContainer a {
-   margin-right: 15px; 
- }
+.followersContainer a {
+   margin-right: 15px;
+}
 
- .followersContainer a:hover {
-   border-bottom: 1px solid #000; 
- }
+.followersContainer a:hover {
+   border-bottom: 1px solid #000;
+}
 
- .tabsContainer {
-   display: flex; 
-   border-bottom: 1px solid var(--lightGrey); 
-   flex-shrink: 0; 
- }
+.tabsContainer {
+   display: flex;
+   border-bottom: 1px solid var(--lightGrey);
+   flex-shrink: 0;
+}
 
- .tab {
-   flex: 1; 
-   height: 52px; 
-   display: flex; 
-   justify-content: center; 
-   align-items: center; 
-   color:var(--greyText); 
-   font-weight: bold;  
- }
+.tab {
+   flex: 1;
+   height: 52px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   color: var(--greyText);
+   font-weight: bold;
+}
 
- .tab {
-   color: var(--blue); 
+.tab.active {
+   color: var(--blue);
    border-bottom: 2px solid var(--blue);
- } 
+}
 
- .tab:hover{
-   color:var(--blue); 
+.tab:hover {
+   color: var(--blue);
    background-color: var(--blueBackground);
- }
+}
 
-
- .noResults {
-   padding: var(--spacing); 
-
- }
+.noResults {
+   padding: var(--spacing);
+}
 
 .resultsContainer {
-   display: flex; 
+   display: flex;
    flex-direction: column;
 }
 
@@ -391,28 +368,51 @@ button span {
    padding: var(--spacing);
    display: flex;
    border-bottom: 1px solid var(--lightGrey);
-} 
-
-.user .userDetailsContainer {
-   flex: 1; 
-   padding: 0 var(--spacing); 
 }
 
-.profilePictureButton {
-   position: absolute; 
-   font-size: 50px; 
+.user .userDetailsContainer {
+   flex: 1;
+   padding: 0 var(--spacing)
+}
+
+.profilePictureButton,
+.coverPhotoButton {
+   position: absolute;
+   font-size: 50px;
    color: rgba(0,0,0,0.6);
    display: none;
 }
 
-.userImageContainer:hover .profilePictureButton {
+.userImageContainer:hover .profilePictureButton,
+.coverPhotoSection:hover .coverPhotoButton {
    display: block;
 }
 
-/* this is imp, mentioned in the npm https://www.npmjs.com/package/cropperjs?activeTab=readme */
+.coverPhotoContainer {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   height: 100%;
+}
+
+.coverPhotoContainer img {
+   width: 100%; 
+   height: 100%; 
+   object-fit: cover;
+}
+
 #imagePreview {
+   width: 100%;
    display: block;
- 
+
    /* This rule is very important, please don't ignore this */
    max-width: 100%;
- }
+}
+
+#coverPreview {
+   width: 100%;
+   display: block;
+
+   /* This rule is very important, please don't ignore this */
+   max-width: 100%;
+}

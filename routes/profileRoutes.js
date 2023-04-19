@@ -8,7 +8,7 @@ const bcrypt = require("bcrypt");
 //top-level of this profileRoutes
 router.get("/", (req, res, next) => {
   var payload = {
-    pageTitle: req.session.user.firstName + " " + req.session.user.userName,
+    pageTitle: req.session.user.userName,
     userLoggedIn: req.session.user,
     userLoggedInJs: JSON.stringify(req.session.user),
     profileUser: req.session.user,
