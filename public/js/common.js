@@ -1,3 +1,8 @@
+//Globals
+
+var cropper;
+
+
 $("#postTextarea, #replyTextarea").keyup(event =>{
     var textbox = $(event.target); 
     var value = textbox.val().trim(); 
@@ -104,7 +109,52 @@ $('#deletePostButton').click((event) => {
 })
 
 
+$("#filePhoto").change(function(){
+   
+   if(this.files && this.files[0]){
+      var reader = new FileReader(); 
+      reader.onload = () => {
+         var image = document.getElementById("imagePreview");
+         image.src = event.target.result;
+         
+         if(cropper !== undefined){
+            cropper.destroy();
+         }
 
+         cropper = new Cropper(image, {
+            aspectRatio: 1 / 1,
+            background: false
+         });
+
+      }
+      reader.readAsDataURL(this.files[0]); 
+   }
+})
+
+$("#imageUploadButton").click(() =>{
+   var canvas = cropper.getCroppedCanvas(); 
+
+   if(canvas == null){
+      alert("cropping issue");
+      return;
+   } 
+   //convert canvas to blob (binary large object)
+   canvas.toBlob((blob) => {
+      var formData = new FormData(); 
+      formData.append("croppedImage", blob);
+
+      $.ajax({
+         url:"/api/users/profilePicture",
+         type: "POST",
+         data: formData, 
+         processData: false, //forces jquery not to convert form data to a string
+         contentType: false, 
+         success: () =>{
+            location.reload();
+         }
+      })
+   })
+})
 
 
 // dynamic content (not available when page loads, this button is only available after making call to the api)
