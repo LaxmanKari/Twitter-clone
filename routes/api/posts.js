@@ -197,6 +197,25 @@ router.delete("/:id", (req,res,next) => {
   })
 })
 
+router.put("/:id", async (req,res,next) => {
+
+  if(req.body.pinned !== undefined){
+     await Post.updateMany({postedBy: req.session.user}, {pinned:false})
+     .catch((error) => {
+      console.log("while deleting : ",error); 
+      res.sendStatus(400); 
+    })
+  }
+
+
+  Post.findByIdAndUpdate(req.params.id, req.body)
+  .then(() => { res.sendStatus(204)})
+  .catch((error) => {
+    console.log("while deleting : ",error); 
+    res.sendStatus(400); 
+  })
+})
+
 async function getPosts(filter) {
 
   var results = await Post.find(filter)

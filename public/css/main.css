@@ -416,3 +416,17 @@ button span {
    /* This rule is very important, please don't ignore this */
    max-width: 100%;
 }
+
+.pinButton.active {
+   color: var(--blue); 
+}
+
+
+.pinnedPostText {
+   font-size: 12 px; 
+   color: var(--greyText)
+}
+
+.pinnedPostContainer {
+   border-bottom: 10px solid rgb(230,236,240);
+}

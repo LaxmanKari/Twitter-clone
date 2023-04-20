@@ -79,8 +79,6 @@ $("#replyModal").on("hidden.bs.modal", () => $("#originalPostContainer").html(""
 
 
 $("#deletePostModal").on("shown.bs.modal", (event) => {
-
-   
    var button = $(event.relatedTarget);
    var postId = getPostIdfromElement(button);
    $('#deletePostButton').data("id", postId); // this data attribute is stored for this element in jquery cache,  
@@ -89,7 +87,26 @@ $("#deletePostModal").on("shown.bs.modal", (event) => {
    console.log($('#deletePostButton').data().id);
 })
 
-    
+//add post id to the Pin button when modal is opened 
+$("#confirmPinModal").on("shown.bs.modal", (event) => {
+   var button = $(event.relatedTarget);
+   var postId = getPostIdfromElement(button);
+   $('#pinPostButton').data("id", postId); // this data attribute is stored for this element in jquery cache,  
+   //will not be shown in element tree
+
+   console.log($('#pinPostButton').data().id);
+})
+
+//unpin post 
+$("#unpinModal").on("shown.bs.modal", (event) => {
+   var button = $(event.relatedTarget);
+   var postId = getPostIdfromElement(button);
+   $('#unpinPostButton').data("id", postId); // this data attribute is stored for this element in jquery cache,  
+   //will not be shown in element tree
+
+   console.log($('#unpinPostButton').data().id);
+})
+   
 
 $('#deletePostButton').click((event) => {
      var postId =$(event.target).data("id"); //element's data id 
@@ -98,13 +115,58 @@ $('#deletePostButton').click((event) => {
       url: `/api/posts/${postId}`,
       type: "DELETE",
       // callback returns some data, we can then use status code 
-      success: (postData) => {
-         //  if(xhr != 202){
-         //    alert("could not delete the post"); 
-         //  }
+      success: (data, status, xhr) => {
+
+          if(xhr.status != 202){
+            alert("could not delete the post"); 
+            return; 
+          }
+
           location.reload(); //reload the page
       }
    })
+
+})
+//pinPostButton
+$('#pinPostButton').click((event) => {
+   var postId =$(event.target).data("id"); //element's data id 
+
+   $.ajax({
+    url: `/api/posts/${postId}`,
+    type: "PUT",
+    data: {pinned: true},
+    // callback returns some data, we can then use status code 
+    success: (data, status, xhr) => {
+
+        if(xhr.status != 204){
+          alert("could not delete the post"); 
+          return; 
+        }
+
+        location.reload(); //reload the page
+    }
+ })
+
+})
+
+$('#unpinPostButton').click((event) => {
+   var postId =$(event.target).data("id"); //element's data id 
+
+   $.ajax({
+    url: `/api/posts/${postId}`,
+    type: "PUT",
+    data: {pinned: false},
+    // callback returns some data, we can then use status code 
+    success: (data, status, xhr) => {
+
+        if(xhr.status != 204){
+          alert("could not delete the post"); 
+          return; 
+        }
+
+        location.reload(); //reload the page
+    }
+ })
 
 })
 
@@ -369,9 +431,20 @@ function createPostHtml(postData, largeFont = false) {
    }
 
    var buttons = ""; 
+   var pinnedPostText = ""; 
    if(postData.postedBy._id == userLoggedIn._id){
-      buttons = `<button data-id="${postData._id}" data-toggle="modal" data-target="#deletePostModal"> <i class="fa-sharp fa-solid fa-xmark"></i>
-                 </button> `
+
+      var pinnedClass = "";
+      var dataTarget = "#confirmPinModal";
+      if(postData.pinned === true){
+         pinnedClass = "active"; 
+         dataTarget = "#unpinModal"; //unpinModal
+         pinnedPostText = "<i class='fa-solid fa-thumbtack'></i> <span>Pinned Post </span>"
+      }
+
+      buttons = ` <button class= 'pinButton ${pinnedClass}'data-id="${postData._id}" data-toggle="modal" data-target="${dataTarget}"> <i class="fa-solid fa-thumbtack"></i></button> 
+                  <button data-id="${postData._id}" data-toggle="modal" data-target="#deletePostModal"> <i class="fa-sharp fa-solid fa-xmark"></i></button> 
+                `
    }
    
    return `<div class='post ${largeFontClass}' data-id="${postData._id}"> 
@@ -384,6 +457,7 @@ function createPostHtml(postData, largeFont = false) {
                        <img src='${postedBy.profilePic}'> 
                    </div> 
                    <div class="postContentContainer"> 
+                      <div class='pinnedPostText'>${pinnedPostText} </div>
                       <div class="header"> 
                         <a href='/profile/${postedBy.userName}' class="displayName"> ${displayName} </a> 
                         <span class='username'> @${postedBy.userName} </span> 
