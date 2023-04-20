@@ -14,6 +14,31 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 //handlers
 
+router.get("/", async(req, res, next) => {
+   var searchObj = req.query; 
+   console.log("setted searchobj");
+   if(req.query.search !== undefined){
+     searchObj = {
+      //mongodb query to search for items if any of the below matches
+        $or : [
+          {firstName: { $regex: searchObj.search , $options: "i"}},
+          {lastName: { $regex: searchObj.search , $options: "i"}},
+          {userName: { $regex: searchObj.search , $options: "i"}}
+        ]
+     }
+   }
+   //console.log("setted searchobj"); 
+   User.find(searchObj) 
+   .then(results => res.status(200).send(results))
+   .catch(error => {
+      console.log(error); 
+      res.sendStatus(400); 
+   })
+}); 
+   
+
+
+
 router.put("/:userId/follow", async(req, res, next) => {
    console.log("user: ", req.params.userId); 
    

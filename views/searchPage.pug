@@ -1,0 +1,19 @@
+extends layouts/main-layout.pug
+
+block content
+
+   .searchBarContainer 
+      i.fa-sharp.fa-solid.fa-magnifying-glass
+      input#searchBox(type="text", name="searchBox", data-search=selectedTab, placeholder="Search for uers or posts")
+
+   .tabsContainer
+         +createTab("Posts", `/search/posts`, selectedTab != "users")
+         +createTab("Users", `/search/users`, selectedTab == "users")
+
+   .resultsContainer 
+   
+   
+   +createPostModal(userLoggedIn)
+
+block scripts 
+    script(src="/js/search.js") 
