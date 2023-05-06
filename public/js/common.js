@@ -1,7 +1,13 @@
 //Globals
-
 var cropper;
+var timer; 
+var selectedUsers = []; 
 
+/* The below code is a JavaScript code that listens for keyup events on the postTextarea and
+replyTextarea elements. When a keyup event occurs, it gets the value of the textbox, trims it, and
+checks if it is empty or not. If it is empty, it disables the submit button. If it is not empty, it
+enables the submit button. If there is no submit button found, it displays an alert message. The
+code is written using jQuery library. */
 
 $("#postTextarea, #replyTextarea").keyup(event =>{
     var textbox = $(event.target); 
@@ -266,6 +272,44 @@ $("#coverPhotoButton").click(() =>{
    })
 })
 
+$("#userSearchTextbox").keydown(() =>{
+   clearTimeout(timer); 
+   var textbox = $(event.target); 
+   var value = textbox.val(); 
+   
+   if(value == "" && (event.which == 8 || event.keyCode == 8)){
+      //remove user from selection 
+      selectedUsers.pop(); 
+      updateSelectedUsersHtml(); 
+      $(".resultsContainer").html("");
+
+
+      return; 
+   }
+
+   timer = setTimeout(() => {
+     value = textbox.val().trim(); 
+
+     if(value == ""){
+        $(".resultsContainer").html(""); 
+     } 
+     else{
+        searchUsers(value); 
+     }
+   }, 1000)
+})
+
+$("#createChatButton").click(() =>{
+    var data = JSON.stringify(selectedUsers); //take the arr and convert to string, to send it to the server 
+
+    $.post("/api/chats", {users: data}, chat => { 
+
+      if(!chat || !chat._id){
+         return alert("Invalid response from server."); 
+      }
+      window.location.href = `/messages/${chat._id}`; 
+    })
+})
 
 // dynamic content (not available when page loads, this button is only available after making call to the api)
 $(document).on("click", ".likeButton", (event) =>{
@@ -618,3 +662,49 @@ function createUserHtml(userData, showFollowButton) {
     `;
  }
 
+ function searchUsers(searchTerm){
+   $.get("/api/users", {search: searchTerm}, results => {
+      outputSelectableUsers(results, $(".resultsContainer")); 
+   })
+ }
+
+ function outputSelectableUsers(results, container) {
+   container.html("");
+ 
+   results.forEach((result) => {
+     
+      if(result._id == userLoggedIn._id || selectedUsers.some(u => u._id == result._id)){
+         return; 
+      }
+     var html = createUserHtml(result, false);
+     var element = $(html); 
+     element.click(() => userSelected(result))
+     container.append(element);
+   });
+ 
+   if (results.length == 0) {
+     container.append("<span class='noResults'> No results found </span> ");
+   }
+ }
+
+ function userSelected(user){
+   selectedUsers.push(user); 
+   updateSelectedUsersHtml();
+   $("#userSearchTextbox").val("").focus(); 
+   $(".resultsContainer").html(""); 
+   $("#createChatButton").prop("disabled", false); 
+ }
+
+
+ function updateSelectedUsersHtml() {
+   var elements = []; 
+
+   selectedUsers.forEach(user => {
+      var name = user.firstName + " " + user.lastName; 
+      var userElement = $(`<span class='selectedUser'> ${name} </span> `)
+      elements.push(userElement); 
+   }) 
+
+   $(".selectedUser").remove(); 
+   $("#selectedUsers").prepend(elements); 
+ }

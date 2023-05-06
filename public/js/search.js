@@ -1,4 +1,4 @@
-var timer; 
+
 
 //event handler 
 $("#searchBox").keydown(() =>{
@@ -7,6 +7,8 @@ $("#searchBox").keydown(() =>{
     var value = textbox.val(); 
     var searchType = textbox.data().search; 
 
+    console.log("textbox", textbox)
+
     timer = setTimeout(() => {
       value = textbox.val().trim(); 
 
@@ -14,6 +16,7 @@ $("#searchBox").keydown(() =>{
          $(".resultsContainer").html(""); 
       } 
       else{
+         
          search(value, searchType); 
       }
     }, 1000)

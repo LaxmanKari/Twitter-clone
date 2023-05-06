@@ -86,7 +86,8 @@ router.post("/", async(req, res, next) => {
     
     var postData = {
       content: req.body.content,
-      postedBy: req.session.user
+      postedBy: req.session.user,
+      pinned: false
     }
     
     if(req.body.replyTo){
