@@ -283,7 +283,6 @@ $("#userSearchTextbox").keydown(() =>{
       updateSelectedUsersHtml(); 
       $(".resultsContainer").html("");
 
-
       return; 
    }
 

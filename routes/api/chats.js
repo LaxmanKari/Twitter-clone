@@ -4,7 +4,7 @@ const router = express.Router();
 const bodyParser = require('body-parser'); 
 const User = require('../../schemas/UserSchema'); 
 const Post = require('../../schemas/PostsSchema'); 
-
+const Chat = require('../../schemas/ChatSchema'); 
 
 app.use(bodyParser.urlencoded({extended: false}));
 
@@ -26,9 +26,15 @@ router.post("/", async(req, res, next) => {
 
    var chatData = {
       users: users, 
-      isG
-   }
+      isGroupChat: true
+   }; 
 
+   Chat.create(chatData)
+   .then(results => res.status(200).send(results))
+   .catch(error => {
+      console.log(error); 
+      res.sendStatus(400); 
+   })
 
 });
 
