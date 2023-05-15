@@ -12,9 +12,11 @@ block content
          .chatTitleBarContainer
             +createChatImage(chat, userLoggedIn) 
             span#chatName(data-toggle="modal", data-target="#chatNameModal") This is the chat 
-         .mainContentContainer 
-            .chatContainer 
-               .chatMessages
+         .mainContentContainer
+            .loadingSpinnerContainer 
+               img(src="/images/loadingSpinner.gif",alt="Loading spinner") 
+            .chatContainer(style="visibility: hidden") 
+               ul.chatMessages
                .footer 
                   textarea.inputTextbox(name="messageInput", placeholder="Type a message...")
                   button.sendMessageButton

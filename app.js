@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('./database'); 
 const session = require('express-session'); 
 
+
 //instance of our app, takes two parameters port and a callback function
 const server = app.listen(port, () => {
   console.log("Server listening on port " + port);
