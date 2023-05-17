@@ -412,6 +412,22 @@ $(document).on("click", ".followButton", (event) =>{
    console.log(userId); 
 })
 
+//these are not available when page loads , .notification.active, .resultsListIem
+$(document).on("click", ".notification.active", (e) => {
+   //when we click on any notification, execute below code
+   var container = $(e.target); 
+   var notificationId = container.data().id;
+   
+   console.log("container :   ", container); 
+   console.log("notificationId :   ", notificationId);
+
+   var href = container.attr("href"); 
+   e.preventDefault(); 
+
+   var callback = () => window.location = href; 
+   markNotificationAsOpened(notificationId, callback); 
+})
+
 function getPostIdfromElement(element) {
 
    var isRoot = element.hasClass("post"); 
@@ -737,4 +753,22 @@ function messageReceived(newMessage) {
    else { //user is on chat page
       addChatMessageHtml(newMessage); 
    }
+}
+
+function markNotificationsAsOpened(notificationId = null, callback = null){
+   if(callback == null) callback = () => location.reload(); 
+
+   console.log("entered func to mark as opened"); 
+   var url = notificationId != null ? `/api/notifications/${notificationId}/markAsOpened` : `/api/notifications/markAsOpened`; 
+
+   console.log(url); 
+
+   console.log("callback func : ", callback );
+   $.ajax({
+      url: url,
+      type: "PUT",
+      success: () => callback() 
+   })
+
+
 }

@@ -797,5 +797,13 @@ button span {
    max-width: 75px;
  }
 
+ .resultsListItem.active {
+   background-color: var(--blueBackground);
+ }
+
+ .resultsListItem.notification * {
+   pointer-events: none;
+ }
+
 
 
