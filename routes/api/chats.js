@@ -41,13 +41,16 @@ router.post("/", async(req, res, next) => {
 
 });
 
-router.get("/", async(req,res,next) => {
+router.get("/", async(req, res, next) => {
    Chat.find({users: {$elemMatch: {$eq: req.session.user._id}}})
    .populate("users")
    .populate("latestMessage")
    .sort({updatedAt: -1})
    .then(async results => {
-      console.log("latest message : ", Chat.latestMessage)
+      if(req.query.unreadOnly !== undefined && req.query.unreadOnly == "true"){
+         results = results.filter(r => r.latestMessage , r => !r.latestMessage.readBy.includes(req.session.user._id)); 
+      }
+      
       results = await User.populate(results, {path: "latestMessage.sender"});
       res.status(200).send(results)
    })

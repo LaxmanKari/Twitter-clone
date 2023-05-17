@@ -3,6 +3,11 @@ var cropper;
 var timer; 
 var selectedUsers = []; 
 
+$(document).ready(() => {
+   refreshMessageBadge(); 
+   refreshNotificationBadge(); 
+})
+
 /* The below code is a JavaScript code that listens for keyup events on the postTextarea and
 replyTextarea elements. When a keyup event occurs, it gets the value of the textbox, trims it, and
 checks if it is empty or not. If it is empty, it disables the submit button. If it is not empty, it
@@ -425,7 +430,7 @@ $(document).on("click", ".notification.active", (e) => {
    e.preventDefault(); 
 
    var callback = () => window.location = href; 
-   markNotificationAsOpened(notificationId, callback); 
+   markNotificationsAsOpened(notificationId, callback); 
 })
 
 function getPostIdfromElement(element) {
@@ -753,6 +758,8 @@ function messageReceived(newMessage) {
    else { //user is on chat page
       addChatMessageHtml(newMessage); 
    }
+
+   refreshMessageBadge(); 
 }
 
 function markNotificationsAsOpened(notificationId = null, callback = null){
@@ -770,5 +777,32 @@ function markNotificationsAsOpened(notificationId = null, callback = null){
       success: () => callback() 
    })
 
+}
 
+function refreshMessageBadge() {
+   $.get("/api/chats", { unreadOnly: true}, (data) => {
+      
+      var numResults = data.length; 
+
+      if(numResults > 0) {
+         $("#messageBadge").text(numResults).addClass("active"); 
+      } 
+      else {
+         $("#messageBadge").text("").addClass("active"); 
+      }
+   })
+}
+
+function refreshNotificationBadge() {
+   $.get("/api/notifications", { unreadOnly: true}, (data) => {
+      
+      var numResults = data.length; 
+
+      if(numResults > 0) {
+         $("#notificationBadge").text(numResults).addClass("active"); 
+      } 
+      else {
+         $("#notificationBadge").text("").addClass(""); 
+      }
+   })
 }
