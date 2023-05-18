@@ -2,6 +2,7 @@
 var cropper;
 var timer; 
 var selectedUsers = []; 
+var data1; 
 
 $(document).ready(() => {
    refreshMessageBadge(); 
@@ -60,6 +61,7 @@ $("#submitPostButton, #submitReplyButton").click((event) =>{
      //console.log(postData);
 
      if(postData.replyTo){
+      emitNotification(postData.replyTo.postedBy);
       location.reload();
      }
      else{
@@ -333,6 +335,7 @@ $(document).on("click", ".likeButton", (event) =>{
 
          if(postData.likes.includes(userLoggedIn._id)) {
             button.addClass("active"); 
+            emitNotification(postData.postedBy);
          } 
          else {
             button.removeClass("active");
@@ -360,6 +363,7 @@ $(document).on("click", ".followButton", (event) =>{
          if(data.following && data.following.includes(userId)) {
             button.addClass("following"); 
             button.text("Following"); 
+            emitNotification(userId); 
          } 
          else {
             button.removeClass("following");
@@ -394,6 +398,7 @@ $(document).on("click", ".retweetButton", (event) =>{
 
          if(postData.retweetUsers.includes(userLoggedIn._id)) {
             button.addClass("active"); 
+            emitNotification(postData.postedBy);
          } 
          else {
             button.removeClass("active");
@@ -751,9 +756,11 @@ function getOtherChatUsers(users){
 
 
 function messageReceived(newMessage) {
-   if($(".chatContainer").length == 0){
+   //element attritribute checking 
+   if($(`[data-room="${newMessage.chat._id}"]`).length == 0){ //this container is not in the page currently 
       //Show popup notification 
-      alert("hey notification");
+      showMessagePopup(newMessage); 
+      
    } 
    else { //user is on chat page
       addChatMessageHtml(newMessage); 
@@ -783,12 +790,12 @@ function refreshMessageBadge() {
    $.get("/api/chats", { unreadOnly: true}, (data) => {
       
       var numResults = data.length; 
-
+      
       if(numResults > 0) {
          $("#messageBadge").text(numResults).addClass("active"); 
       } 
       else {
-         $("#messageBadge").text("").addClass("active"); 
+         $("#messageBadge").text("").removeClass("active"); 
       }
    })
 }
@@ -802,7 +809,160 @@ function refreshNotificationBadge() {
          $("#notificationBadge").text(numResults).addClass("active"); 
       } 
       else {
-         $("#notificationBadge").text("").addClass(""); 
+         $("#notificationBadge").text("").removeClass("active"); 
       }
    })
 }
+
+function showNotificationPopup(data) {
+   var html = createNotificationHtml(data); 
+   var element = $(html); 
+   element.hide().prependTo("#notificationList").slideDown("fast"); 
+
+   setTimeout(() => element.fadeOut(400), 5000); 
+}
+
+function showMessagePopup(data) {
+
+   if(!data.chat.latestMessage._id){
+      data.chat.latestMessage = data; 
+   }
+   var html = createChatHtml(data.chat); 
+   var element = $(html); 
+   element.hide().prependTo("#notificationList").slideDown("fast"); 
+
+   setTimeout(() => element.fadeOut(400), 5000); 
+}
+
+
+function outputNotificationList(notifications, container) {
+   notifications.forEach((notification) => {
+     var html = createNotificationHtml(notification);
+     container.append(html);
+   });
+ 
+   if (notifications.length == 0) {
+     container.append("<span class='noResults'> Nothing to show </span>");
+   }
+ }
+ 
+ function createNotificationHtml(notification) {
+   var userFrom = notification.userFrom;
+   var text = getNotificationText(notification); 
+   var href = getNotificationUrl(notification); 
+   var className = notification.opened ? "" : "active"; 
+ 
+   return `<a href='${href}' class='resultsListItem notification ${className}' data-id ='${notification._id}'> 
+                <div class='resultsImageContainer'> 
+                   <img src='${userFrom.profilePic}'> 
+                </div> 
+                <div class='resultsDetailsContainer ellipsis'> 
+                   <span class='ellipsis notification ${className} data-id ='${notification._id}' > ${text} </span>
+                </div> 
+    
+           </a>`;
+ }
+ 
+ function getNotificationText(notification){
+ 
+     var userFrom = notification.userFrom; 
+ 
+ 
+     if(!userFrom.firstName || !userFrom.lastName){
+         return alert("User from data not populated");
+     } 
+ 
+     var userFromName = `${userFrom.firstName} ${userFrom.lastName}`; 
+ 
+     var text; 
+ 
+     if(notification.notificationType == "retweet"){
+         text = `${userFromName} retweeted one of your posts`; 
+     }
+     else if(notification.notificationType == "postLike"){
+         text = `${userFromName} liked one of your posts`; 
+     }
+     else if(notification.notificationType == "reply"){
+       text = `${userFromName} replied to one of your posts`; 
+     }
+     else if(notification.notificationType == "follow"){
+       text = `${userFromName} Followed you`; 
+     }
+ 
+     // return `<span class='ellipsis'${text}</span>`;
+     return text; 
+ }
+ 
+ 
+ function getNotificationUrl(notification){
+ 
+   var url = "#"; 
+ 
+   if(notification.notificationType == "retweet" || 
+      notification.notificationType == "postLike" || 
+      notification.notificationType == "reply") {
+ 
+     url = `/posts/${notification.entityId}`; 
+   }
+   
+   else if(notification.notificationType == "follow"){
+       url = `/profile/${notification.entityId}`; 
+   }
+  
+   return url; 
+ }
+
+
+ function createChatHtml(chatData) {
+   var chatName = getChatName(chatData); // TODO
+   var image = getChatImageElements(chatData); //TODO
+   var latestMessage = getLatestMessage(chatData.latestMessage);
+
+   // for making chat bluw (unread) 
+   var activeClass = !chatData.latestMessage || chatData.latestMessage.readBy.includes(userLoggedIn._id) ? "" : "active"; 
+   
+   return `<a href='/messages/${chatData._id}' class='resultsListItem ${activeClass}'>
+                ${image}
+                <div class='resultsDetailsContainer ellipsis'> 
+                      <span class="heading ellipsis">${chatName} </span> 
+                      <span class="subText ellipsis">${latestMessage} </span>
+                </div> 
+            </a>`;
+ }
+ 
+ function getLatestMessage(latestMessage){
+   if(latestMessage !=null){
+     var sender = latestMessage.sender; 
+     return `${sender.firstName} ${sender.lastName}: ${latestMessage.content}`;
+   }
+ 
+   return "New chat"; 
+ }
+ 
+ 
+ 
+ function getChatImageElements(chatData) {
+    var otherChatUsers = getOtherChatUsers(chatData.users); 
+ 
+    var groupChatClass = ""; 
+    var chatImage = getUserChatImageElement(otherChatUsers[0]); 
+ 
+    if(otherChatUsers.length > 1){
+       groupChatClass = "groupChatImage"; 
+       chatImage += getUserChatImageElement(otherChatUsers[1]); 
+    } 
+ 
+    return `<div class='resultsImageContainer ${groupChatClass}'> ${chatImage} </div>`
+ 
+ } 
+ 
+ function getUserChatImageElement(user){
+    if(!user || !user.profilePic){
+       return alert("User passed into function is invaid");
+    } 
+ 
+    return `<img src='${user.profilePic}' alt='User's profile pic'>`;
+ }
+ 
+
+ 

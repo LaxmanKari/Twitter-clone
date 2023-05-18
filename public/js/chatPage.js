@@ -24,6 +24,7 @@ $(document).ready(() => {
     var messagesHtml = messages.join(""); 
     addMessagesHtmlToPage(messagesHtml); 
     scrollToBottom(false); 
+    markAllMessagesAsRead();
 
     $(".loadingSpinnerContainer").remove(); 
     $(".chatContainer").css("visibility", "visible"); 
@@ -55,11 +56,11 @@ $(".sendMessageButton").click(() => {
 $(".inputTextbox").keydown((event) => {
 
   updateTyping(); 
-
   if (event.which === 13) {
     messageSubmitted();
     return false; // prevents new line
   }
+
 });
 
 function updateTyping(){
@@ -189,4 +190,12 @@ function scrollToBottom(animated){
   else {
     container.scrollTop(scrollHeight); 
   }
+}
+
+function markAllMessagesAsRead() {
+  $.ajax({
+    url: `/api/chats/${chatId}/messages/markAsRead`,
+    type: "PUT", 
+    success: () => refreshMessageBadge()
+  })
 }

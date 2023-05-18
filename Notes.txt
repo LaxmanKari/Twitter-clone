@@ -1,0 +1,5 @@
+emitNotifications we have used in four scenarios 
+1. follow button 
+2. retweet button
+3. like button 
+4. submit reply button 
