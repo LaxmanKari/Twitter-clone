@@ -6,7 +6,8 @@ const middleware = require('./middleware');
 const path = require('path'); 
 const bodyParser = require('body-parser');  
 const mongoose = require('./database'); 
-const session = require('express-session'); 
+const session = require('express-session');
+
 
 
 //instance of our app, takes two parameters port and a callback function
@@ -104,3 +105,4 @@ io.on("connection", (socket) => {
   }); 
 
 })
+
