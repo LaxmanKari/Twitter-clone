@@ -5,8 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js",
-    "build": "netlify deploy --prod"
+    "start": "nodemon app.js"
   },
   "author": "Kari Laxman",
   "license": "ISC",
