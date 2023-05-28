@@ -1,7 +1,7 @@
 const express = require("express");
 //initialize the app
 const app = express();
-const port = 3003;
+const PORT = process.env.PORT || 3003;
 const middleware = require('./middleware'); 
 const path = require('path'); 
 const bodyParser = require('body-parser');  
@@ -11,8 +11,8 @@ const session = require('express-session');
 
 
 //instance of our app, takes two parameters port and a callback function
-const server = app.listen(port, () => {
-  console.log("Server listening on port " + port);
+const server = app.listen(PORT, () => {
+  console.log("Server listening on port " + PORT);
 });
 const io = require("socket.io")(server, {pingTimeout: 60000}); 
 
