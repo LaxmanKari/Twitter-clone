@@ -1,6 +1,7 @@
 const express = require("express");
 //initialize the app
 const app = express();
+const cors = require('cors');
 const PORT = process.env.PORT || 3003;
 const middleware = require('./middleware'); 
 const path = require('path'); 
@@ -19,6 +20,10 @@ const io = require("socket.io")(server, {pingTimeout: 60000});
 //template engine
 app.set("view engine", "pug");
 app.set("views", "views");
+
+app.use(cors({
+  origin: 'https://laxman-twitter.onrender.com'
+}));
 
 //body-paser 
 app.use(bodyParser.urlencoded({extended: false}));
